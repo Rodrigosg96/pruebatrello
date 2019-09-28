@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+        <title>P3</title>
+        <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+        <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+        <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+
+
+    <script>
+        var studentData = {
+            code: null,
+            name: null,
+            career: null,
+            campus: null,
+        }
+        document.addEventListener('init', function (event) {
+    var page = event.target;
+
+    if (page.id === 'page1') {
+        page.querySelector('#enviar').onclick = function () {
+            enviar();
+            document.querySelector('#myNavigator').pushPage('page2.html', {
+                data: {
+                    title: 'Page 2'
+                }
+            });
+
+        };
+    }
+    /*else if(page.id==='page2'){
+      page.querySelector('#ins').onclick = function () {
+            document.querySelector('#myNavigator').pushPage('page3.html', {
+                data: {
+                    title: 'Page 3'
+                }
+            })
+        };
+        insertar();
+    } */
+});
+        function enviar() {
+        var codigo = document.getElementById("codigo").value;
+        studentData.code = codigo;
+        var nip = document.getElementById("nip").value;
+        // declarando y obteniendo variables de los input
+        // mandando datos al servidor
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if(xhttp.responseText=="Sesion invalida"){
+                    ons.notification.alert(xhttp.responseText);
+                }
+            else{
+                obj = JSON.parse(xhttp.responseText);
+                studentData.name = obj["alumno"];
+                studentData.career = obj["carrera"];
+                studentData.campus = obj["campus"];
+                document.getElementById("codigoAlumno").innerHTML = "Código: " + studentData.code;
+                document.getElementById("nombreAlumno").innerHTML = "Nombre: " + studentData.name;
+                document.getElementById("carreraAlumno").innerHTML = "Carrera: " + studentData.career;
+                document.getElementById("campusAlumno").innerHTML = "Campus: " + studentData.campus;
+            }
+        }
+        };
+        xhttp.open("POST", "https://dcc.000webhostapp.com/2019B/horario.php?codigo=" + codigo + "&nip=" + nip, true);
+        xhttp.send();
+}
+        </script>
+    </head>
+    <body>
+        <center>
+          <ons-page>
+            <ons-navigator swipeable id="myNavigator" page="page1.html"></ons-navigator>
+            <template id="page1.html">
+              <ons-page id="page1">
+                <center>
+                  <h1> Horario<h1>
+                      <ons-input input-id="codigo" type="tel" placeholder="Código" value="216788031"> </ons-input> <br>
+                      <ons-input input-id="nip" type="password" placeholder="NIP" value="laweagore"> </ons-input> <br>
+                      <ons-button id="enviar"> Ingresar </ons-button>
+                </center>
+      
+              </ons-page>
+            </template>
+      
+            <template id="page2.html">
+              <ons-page id="page2">
+                  <ons-toolbar>
+                      <div class="center">
+                        Bienvenido
+                      </div>
+                      <div class="left">
+                          <ons-back-button>Cerrar Sesion</ons-back-button>
+                      </div>
+                    </ons-toolbar>
+                <ons-card modifier="material">
+                  <div class="center" style="font-weight: bold; font-size: 28px;">
+                    Datos del Alumno
+                  </div>
+                  <form id="form1" name="form1" style="text-align:left;margin-top:10px; padding: 2px">
+                    <!-- Se definen los IDs por los cuales van a ser modificados en el HTML -->
+                    <p id="codigoAlumno"></p>
+                    <p id="nombreAlumno"></p>
+                    <p id="carreraAlumno"></p>
+                    <p id="campusAlumno"></p>
+                  </form>
+                  <form id="form2">
+                    <ons-list>
+                      <ons-list-item tappable id="ins" onclick="insertar()">Insertar</ons-list-item>
+                      <ons-list-item tappable>Mostrar</ons-list-item>
+                      <ons-list-item tappable>Modificar</ons-list-item>
+                    </ons-list>
+                  </form>
+                </ons-card>
+              </ons-page>
+            </template>
+            <template id="page3.html">
+              <ons-page id="page3">
+                  <ons-toolbar>
+                      <div class="center">
+                        Insertar
+                      </div>
+                      <div class="left">
+                          <ons-back-button>Volver</ons-back-button>
+                      </div>
+                    </ons-toolbar>
+                <ons-card>
+                  <form id="form3">
+                      <p id="cod">Codigo: </p>
+                      <p id="nom">Nombre: </p>
+                      <p id="nrc">NRC: <ons-input input-id="inputnrc"></p>
+                      <p id="dia">Dia: <ons-input input-id="inputdia"></ons-input></p>
+                      <p id="hora">Hora: <ons-input input-id="inputhora"></ons-input></p>
+                      <p id="materia">Materia: <ons-input input-id="inputmateria"></ons-input></p>
+                  </form>
+                </ons-card>
+              </ons-page>
+            </template>
+        </center>
+      </body>
+      <script>
+        function insertar(){
+          document.getElementById("cod").innerHTML="Codigo: ";
+          document.getElementById("nom").innerHTML="Nombre: ";
+          document.querySelector('#myNavigator').pushPage('page3.html', {
+                data: {
+                    title: 'Page 3'
+                }
+            });
+        }
+      </script>
+</html>
